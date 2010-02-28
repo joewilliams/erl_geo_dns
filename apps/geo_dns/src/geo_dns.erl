@@ -19,8 +19,8 @@ start_link() ->
 init([]) ->
   {ok, #state{}}.
 
-handle_call(Msg, _From, State) ->
-  {reply, Reply, State}.
+handle_call(_Msg, _From, State) ->
+  {reply, ok, State}.
 
 handle_cast(_Msg, State) ->
   {noreply, State}.

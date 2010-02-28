@@ -3,10 +3,10 @@
 %% math functions
 -export([haversine/4, pythagoras/4, sphericalcos/4]).
 
-%% distance sorting functions
--export([timedrun/2, start/1, lookup_ip/1]).
-
 %% util functions
+-export([timedrun/2]).
+
+%% distance sorting functions
 -export([distance/3, closest/2, closest/3]).
 
 -define(RADDEG, 0.017453292519943295769236907684886).
@@ -38,21 +38,18 @@ closest(Origin, List) ->
   closest(haversine, Origin, List).
 
 closest(Fun, Origin, List) ->
-  L = [ {X, distance:distance(Fun, Origin, X)} || X <- List ],
+  L = [ {X, distance(Fun, Origin, X)} || X <- List ],
   [{IP, _} | _] = lists:sort(fun({_, Dist0}, {_, Dist1}) -> Dist0 =< Dist1 end, L),
   IP.
 
 distance(Fun, Origin, IP) ->
-  {geoip, _, _, _, _, _, Lat, Lon, _} = distance:lookup_ip(IP),
-  {geoip, _, _, _, _, _, OriginLat, OriginLon, _} = distance:lookup_ip(Origin),
-  Dist = distance:Fun(OriginLat, OriginLon, Lat, Lon),
+  {geoip, _, _, _, _, _, Lat, Lon, _} = libgeoip:lookup(IP),
+  {geoip, _, _, _, _, _, OriginLat, OriginLon, _} = libgeoip:lookup(Origin),
+  Dist = geo_dns_distance:Fun(OriginLat, OriginLon, Lat, Lon),
   Dist.
 
 
 %% util functions
-
-lookup_ip(IP) ->
-  libgeoip:lookup(IP).
 
 timedrun(Fun, Count) ->
   Time0 = erlang:now(),
@@ -65,11 +62,3 @@ timedrun(Fun, Count) ->
 
 for(N,N,F) -> [F()];
 for(I,N,F) -> [F()|for(I+1,N,F)].
-
-set_geo_db(File) ->
-  case libgeoip:set_db(File) of
-    db_set ->
-      ok;
-    _ ->
-      error
-  end.
