@@ -1,4 +1,4 @@
--module(distance).
+-module(geo_dns_distance).
 
 %% math functions
 -export([haversine/4, pythagoras/4, sphericalcos/4]).
@@ -10,11 +10,6 @@
 -export([distance/3, closest/2, closest/3]).
 
 -define(RADDEG, 0.017453292519943295769236907684886).
-
-
-start(File) ->
-  application:start(libgeoip),
-  set_geo_db(File).
 
 
 %% math functions
