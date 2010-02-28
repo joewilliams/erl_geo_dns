@@ -40,9 +40,7 @@ sphericalcos(Lat0, Lon0, Lat1, Lon1) ->
 %% distance sorting functions
 
 closest(Origin, List) ->
-  L = [ {X, distance:distance(haversine, Origin, X)} || X <- List ],
-  [{IP, _} | _] = lists:sort(fun({_, Dist0}, {_, Dist1}) -> Dist0 =< Dist1 end, L),
-  IP.
+  closest(haversine, Origin, List).
 
 closest(Fun, Origin, List) ->
   L = [ {X, distance:distance(Fun, Origin, X)} || X <- List ],
