@@ -7,7 +7,7 @@
 -export([timedrun/2, start/1, lookup_ip/1]).
 
 %% util functions
--export([distance/3, closest/2, closest/3, closest/4]).
+-export([distance/3, closest/2, closest/3]).
 
 -define(RADDEG, 0.017453292519943295769236907684886).
 
@@ -49,12 +49,6 @@ closest(Fun, Origin, List) ->
   [{IP, _} | _] = lists:sort(fun({_, Dist0}, {_, Dist1}) -> Dist0 =< Dist1 end, L),
   IP.
 
-closest(Fun, Origin, IP0, IP1) ->
-  OriginIP0Dist = distance:distance(Fun, Origin, IP0),
-  OriginIP1Dist = distance:distance(Fun, Origin, IP1),
-  A = compare(IP0, OriginIP0Dist, IP1, OriginIP1Dist),
-  A.
-
 distance(Fun, Origin, IP) ->
   {geoip, _, _, _, _, _, Lat, Lon, _} = distance:lookup_ip(IP),
   {geoip, _, _, _, _, _, OriginLat, OriginLon, _} = distance:lookup_ip(Origin),
@@ -86,6 +80,3 @@ set_geo_db(File) ->
     _ ->
       error
   end.
-
-compare(_, OriginIP0Dist, IP1, OriginIP1Dist) when OriginIP0Dist >= OriginIP1Dist -> IP1;
-compare(IP0, OriginIP0Dist, _, OriginIP1Dist) when OriginIP0Dist < OriginIP1Dist -> IP0.
