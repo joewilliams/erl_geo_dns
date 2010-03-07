@@ -23,7 +23,7 @@ start_link() ->
   {ok, Host} = application:get_env(geo_dns, host),
   gen_server:start_link(?MODULE, [Host, Port], []).
 
-init([Host, Post]) ->
+init([Host, Port]) ->
   case gen_udp:open(Port, [{active, once}, binary]) of
     {ok, Socket} ->
       {ok, #state{socket=Socket,host=Host,port=Port}};
