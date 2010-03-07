@@ -8,10 +8,11 @@
      geo_dns_udp, 
      geo_dns_query]},
   {registered, []},
-  {applications, [libgeoip]},
+  {applications, []},
   {env, 
     [{port, 5353}, 
-     {host, {0,0,0,0}}]
+     {host, {0,0,0,0}},
+     {db, "/home/joe/GeoLiteCity.dat"}]
   },
   {mod, {geo_dns_app, []}}
  ]}.

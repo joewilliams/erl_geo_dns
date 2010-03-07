@@ -12,15 +12,13 @@
    port   :: pos_integer()}).
 
 %% API
--export([start_link/0]).
+-export([start_link/2]).
 
 %% gen_server callbacks
 -export([init/1, handle_call/3, handle_cast/2, handle_info/2,
    terminate/2, code_change/3]).
 
-start_link() ->
-  {ok, Port} = application:get_env(geo_dns, port),
-  {ok, Host} = application:get_env(geo_dns, host),
+start_link(Host, Port) ->
   gen_server:start_link(?MODULE, [Host, Port], []).
 
 init([Host, Port]) ->
