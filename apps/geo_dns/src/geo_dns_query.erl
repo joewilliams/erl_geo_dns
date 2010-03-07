@@ -23,7 +23,7 @@ query_handler(IP, Packet)->
 get_addr(Domain, Origin) ->
   case Domain of
     "cloudant.com" ->
-      geo_dns_distance:closest(ip_to_binary({75,101,130,106}), [ip_to_binary({75,101,130,106}), ip_to_binary({63,246,20,70})]);
+      geo_dns_distance:closest(ip_to_binary({64,81,165,209}), [ip_to_binary({75,101,130,106}), ip_to_binary({63,246,20,70}), ip_to_binary({74,125,127,99})]);
     _ ->
       {127,0,0,1}
   end.
