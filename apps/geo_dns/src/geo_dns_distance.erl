@@ -11,7 +11,6 @@
 
 -define(RADDEG, 0.017453292519943295769236907684886).
 
-
 %% math functions
 
 haversine(Lat0, Lon0, Lat1, Lon1) ->
@@ -46,6 +45,7 @@ distance(Fun, Origin, IP) ->
   {geoip, _, _, _, _, _, Lat, Lon, _} = libgeoip:lookup(IP),
   {geoip, _, _, _, _, _, OriginLat, OriginLon, _} = libgeoip:lookup(Origin),
   Dist = geo_dns_distance:Fun(OriginLat, OriginLon, Lat, Lon),
+  io:format("origin: ~p~ndest: ~p~ndistance: ~p~n",[Origin, IP, Dist]),
   Dist.
 
 

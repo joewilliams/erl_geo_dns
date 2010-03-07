@@ -1,7 +1,18 @@
 {application, geo_dns,
  [{description, "dns server with geoip support"},
   {vsn, "0.1"},
-  {modules, [geo_dns_distance, geo_dns_sup, geo_dns_app, geo_dns]},
+  {modules, 
+    [geo_dns_distance, 
+     geo_dns_sup, 
+     geo_dns_app, 
+     geo_dns_udp, 
+     geo_dns_query,
+     hovercraft]},
   {registered, []},
-  {applications, []}
+  {applications, [libgeoip]},
+  {env, 
+    [{port, 5353}, 
+     {host, {0,0,0,0}}]
+  },
+  {mod, {geo_dns_app, []}}
  ]}.

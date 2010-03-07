@@ -5,7 +5,7 @@
 -export([start/2, stop/1]).
 
 start() ->
-  application:start(geo_dns_app).
+  geo_dns_sup:start_link().
 
 stop() ->
   application:stop(geo_dns_app).

@@ -7,8 +7,6 @@ start_link() ->
   supervisor:start_link({local, ?MODULE}, ?MODULE, []).
 
 init(_) ->
-  GeoDNSSpec = {geodns,
-                 {geo_dns, start_link, []},
-                   permanent, brutal_kill, worker, [geo_dns]},
-
-  {ok, {{one_for_one, 5, 1}, [GeoDNSSpec]}}.
+  GeoDNSSpec = {geo_dns_udp, {geo_dns_udp, start_link, []}, permanent, brutal_kill, worker, [geo_dns_udp]},
+  io:format("starting: ~p~n", [GeoDNSSpec]),
+  {ok, {{one_for_one, 1, 1}, [GeoDNSSpec]}}.

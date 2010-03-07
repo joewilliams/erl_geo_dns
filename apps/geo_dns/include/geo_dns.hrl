@@ -1,3 +1,5 @@
+%% stolen from http://bitbucket.org/kuenishi/bine/src/tip/include/bine_dns.hrl
+
 %% http://erlang.org/examples/klacke_examples/ftpd.erl
 -define(is_ip(X), size(X)==4, (element(1,X) bor element(2,X) bor element(3,X) bor element(4,X)) band (bnot 255) == 0).
 
