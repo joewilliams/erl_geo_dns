@@ -10,6 +10,8 @@ init(_) ->
   {ok, Db} = application:get_env(geo_dns, db),
   {ok, Port} = application:get_env(geo_dns, port),
   {ok, Host} = application:get_env(geo_dns, host),
+  couchbeam:start(),
+  couchbeam_server:start_connection_link(),
   GeoDNSSpec =
   [
     {libgeoip, {libgeoip, start_link, [Db]}, permanent, brutal_kill, worker, [libgeoip]},

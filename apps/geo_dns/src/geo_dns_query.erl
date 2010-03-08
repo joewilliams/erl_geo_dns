@@ -21,12 +21,11 @@ query_handler(IP, Packet)->
   ReplyBin.
 
 get_addr(Domain, Origin) ->
-  case Domain of
-    "cloudant.com" ->
-      geo_dns_distance:closest(ip_to_binary({64,81,165,209}), [ip_to_binary({75,101,130,106}), ip_to_binary({63,246,20,70}), ip_to_binary({74,125,127,99})]);
-    _ ->
-      {127,0,0,1}
-  end.
+  Db = couchbeam_server:open_db(default, "test"),
+  {[_,_,{<<"iplist">>,IpList}]} = couchbeam_db:open_doc(Db, Domain),
+  io:format("doc: ~p~n",[couchbeam_db:open_doc(Db, Domain)]),
+  IpListBin = [list_to_binary(X) || X <- IpList],
+  geo_dns_distance:closest(ip_to_binary({64,81,165,209}), IpListBin).
 
 ip_to_binary({A,B,C,D}) ->
   <<A,B,C,D>>.
