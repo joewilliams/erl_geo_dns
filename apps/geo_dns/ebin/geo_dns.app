@@ -12,7 +12,8 @@
   {env, 
     [{port, 5353}, 
      {host, {0,0,0,0}},
-     {db, "/home/joe/GeoLiteCity.dat"}]
+     {geodb, "/home/joe/GeoLiteCity.dat"},
+     {dnsdb, "test"}]
   },
   {mod, {geo_dns_app, []}}
  ]}.
