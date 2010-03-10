@@ -6,28 +6,21 @@
 
 query_handler(IP, Packet)->
   {ok, Request} = inet_dns:decode(Packet),
+  io:format("request: ~p~n", [Request]),
   [Query] = Request#dns_rec.qdlist,
   OldHeader = Request#dns_rec.header,
   case get_addr(Query#dns_query.domain, IP) of
     nonexistant_domain ->
       nonexistant_domain;
     Addr ->
-      Reply =
-        {dns_rec,
-        {dns_header,OldHeader#dns_header.id,true,'query',false,false,true,true,false,0},
-        [Query],
-        [{dns_rr,Query#dns_query.domain,a,in,0,5,
-          Addr,
-          undefined,[],false}],
-        [],[]},
+      Reply = response(Addr, OldHeader, Query),
       io:format("reply: ~p~n", [Reply]),
       ReplyBin=inet_dns:encode(Reply),
       ReplyBin
   end.
 
 get_addr(Domain, Origin) ->
-  {ok, DnsDb} = application:get_env(geo_dns, dnsdb),
-  Db = couchbeam_server:open_db(default, DnsDb),
+  [{couchdb, Db}] = ets:lookup(geo_dns, couchdb),
   case couchbeam_db:open_doc(Db, Domain) of
     {[_,_,{<<"iplist">>,IpList}]} ->
       io:format("doc: ~p~n",[couchbeam_db:open_doc(Db, Domain)]),
@@ -37,5 +30,24 @@ get_addr(Domain, Origin) ->
       nonexistant_domain
   end.
 
+response(Addr, OldHeader, Query=#dns_query{type=a,class=in}) ->
+  {dns_rec,
+    OldHeader,
+    [Query],
+    [{dns_rr,
+      Query#dns_query.domain,
+      Query#dns_query.type,
+      Query#dns_query.class,
+      0,
+      get_ttl(Query#dns_query.domain),
+      Addr,
+      undefined,
+      [],
+      false}],
+    [],[]}.
+
 ip_to_binary({A,B,C,D}) ->
   <<A,B,C,D>>.
+
+get_ttl(_) ->
+  300.
