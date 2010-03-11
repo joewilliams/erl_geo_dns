@@ -8,7 +8,7 @@ start() ->
   geo_dns_sup:start_link().
 
 stop() ->
-  application:stop(geo_dns_app).
+  application:stop(geo_dns).
 
 
 start(_Type, _Args) ->
