@@ -20,10 +20,8 @@ query_handler(IP, Packet)->
   end.
 
 get_addr(Domain, Origin) ->
-  [{couchdb, Db}] = ets:lookup(geo_dns, couchdb),
-  case couchbeam_db:open_doc(Db, Domain) of
+  case couchbeam_db:open_doc(dnsdb, Domain) of
     {[_,_,{<<"iplist">>,IpList}]} ->
-      io:format("doc: ~p~n",[couchbeam_db:open_doc(Db, Domain)]),
       IpListBin = [list_to_binary(X) || X <- IpList],
       geo_dns_distance:closest(ip_to_binary({64,81,165,209}), IpListBin);
     _ ->
