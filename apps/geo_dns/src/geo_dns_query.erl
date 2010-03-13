@@ -53,6 +53,3 @@ response(Addr, Ttl, OldHeader, Query=#dns_query{class=in}) ->
 
 ip_to_binary({A,B,C,D}) ->
   <<A,B,C,D>>.
-
-get_ttl(_) ->
-  300.
