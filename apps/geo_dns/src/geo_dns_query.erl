@@ -12,8 +12,8 @@ query_handler(IP, Packet)->
   case get_addr(Query#dns_query.domain, IP) of
     nonexistant_domain ->
       nonexistant_domain;
-    Addr ->
-      Reply = response(Addr, OldHeader, Query),
+    {Addr, RecType} ->
+      Reply = response(Addr, RecType, OldHeader, Query),
       io:format("reply: ~p~n", [Reply]),
       ReplyBin=inet_dns:encode(Reply),
       ReplyBin
@@ -21,20 +21,21 @@ query_handler(IP, Packet)->
 
 get_addr(Domain, Origin) ->
   case couchbeam_db:open_doc(dnsdb, Domain) of
-    {[_,_,{<<"iplist">>,IpList}]} ->
+    {[_,_,{<<"iplist">>,IpList}, {<<"record_type">>, RecType}]} ->
       IpListBin = [list_to_binary(X) || X <- IpList],
-      geo_dns_distance:closest(ip_to_binary({64,81,165,209}), IpListBin);
+      Ip = geo_dns_distance:closest(ip_to_binary({64,81,165,209}), IpListBin),
+  		{RecType, Ip};
     _ ->
       nonexistant_domain
   end.
 
-response(Addr, OldHeader, Query=#dns_query{type=a,class=in}) ->
+response(Addr, RecType, OldHeader, Query=#dns_query{class=in}) ->
   {dns_rec,
     OldHeader,
     [Query],
     [{dns_rr,
       Query#dns_query.domain,
-      Query#dns_query.type,
+      list_to_atom(RecType),
       Query#dns_query.class,
       0,
       get_ttl(Query#dns_query.domain),
