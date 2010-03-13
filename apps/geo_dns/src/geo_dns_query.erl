@@ -4,41 +4,47 @@
 
 -export([query_handler/2]).
 
-query_handler(IP, Packet)->
+query_handler(Ip, Packet)->
   {ok, Request} = inet_dns:decode(Packet),
   io:format("request: ~p~n", [Request]),
   [Query] = Request#dns_rec.qdlist,
   OldHeader = Request#dns_rec.header,
-  case get_addr(Query#dns_query.domain, IP) of
-    nonexistant_domain ->
-      nonexistant_domain;
-    {Addr, RecType} ->
-      Reply = response(Addr, RecType, OldHeader, Query),
-      io:format("reply: ~p~n", [Reply]),
-      ReplyBin=inet_dns:encode(Reply),
-      ReplyBin
+  case Query#dns_query.type of
+    a ->
+      case get_addr(Query#dns_query.domain, Ip) of
+        nonexistant_domain ->
+          nonexistant_domain;
+        {Ttl, Addr} ->
+          Reply = response(Addr, Ttl, OldHeader, Query),
+          io:format("reply: ~p~n", [Reply]),
+          ReplyBin=inet_dns:encode(Reply),
+          ReplyBin
+      end;
+    _ ->
+      wrong_record_type
   end.
 
 get_addr(Domain, Origin) ->
+  io:format("~p~n", [couchbeam_db:open_doc(dnsdb, Domain)]),
   case couchbeam_db:open_doc(dnsdb, Domain) of
-    {[_,_,{<<"iplist">>,IpList}, {<<"record_type">>, RecType}]} ->
+    {[_,_,{<<"iplist">>,IpList}, {<<"ttl">>, Ttl}]} ->
       IpListBin = [list_to_binary(X) || X <- IpList],
       Ip = geo_dns_distance:closest(ip_to_binary({64,81,165,209}), IpListBin),
-  		{RecType, Ip};
+      {Ttl, Ip};
     _ ->
       nonexistant_domain
   end.
 
-response(Addr, RecType, OldHeader, Query=#dns_query{class=in}) ->
+response(Addr, Ttl, OldHeader, Query=#dns_query{class=in}) ->
   {dns_rec,
     OldHeader,
     [Query],
     [{dns_rr,
       Query#dns_query.domain,
-      list_to_atom(RecType),
+      Query#dns_query.type,
       Query#dns_query.class,
       0,
-      get_ttl(Query#dns_query.domain),
+      Ttl,
       Addr,
       undefined,
       [],
