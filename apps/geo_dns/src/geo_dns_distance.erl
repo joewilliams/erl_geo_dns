@@ -3,9 +3,6 @@
 %% math functions
 -export([haversine/4, pythagoras/4, sphericalcos/4]).
 
-%% util functions
--export([timedrun/2]).
-
 %% distance sorting functions
 -export([distance/3, closest/2, closest/3]).
 
@@ -47,18 +44,3 @@ distance(Fun, Origin, IP) ->
   Dist = geo_dns_distance:Fun(OriginLat, OriginLon, Lat, Lon),
   io:format("origin: ~p~ndest: ~p~ndistance: ~p~n",[Origin, IP, Dist]),
   Dist.
-
-
-%% util functions
-
-timedrun(Fun, Count) ->
-  Time0 = erlang:now(),
-  for(1, Count, fun() -> Fun end),
-  Time1 = timer:now_diff(erlang:now(), Time0),
-  Time1.
-
-
-%% internal functions
-
-for(N,N,F) -> [F()];
-for(I,N,F) -> [F()|for(I+1,N,F)].
