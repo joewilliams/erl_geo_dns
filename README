@@ -1,5 +1,4 @@
 
-
 geo_dns : a simple geoip dns server
 
 
@@ -29,7 +28,7 @@ _id : "test.com"
 iplist : [[a,b,c,d],[a,b,c,d]]
 ttl : 300
 
-* note that the iplist field is an array of arrays where ip address octets are items in the internal array.
+* note that the iplist field is an array of arrays where ip address octets are items in the internal arrays
 
 
 caveats:
