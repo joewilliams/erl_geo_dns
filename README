@@ -1,0 +1,44 @@
+
+
+geo_dns : a simple geoip dns server
+
+
+license : apache 2
+
+
+building/starting : 
+
+apt-get install libgeoip-dev libgeoip1 erlang couchdb
+
+download geoip db, http://geolite.maxmind.com/download/geoip/database/GeoLiteCity.dat.gz
+
+git clone git@github.com:joewilliams/erl_geo_dns.git
+
+cd erl_geo_dns
+make
+# adjust apps/geo_dns/ebin/geo_dns.app for the configuration (port, db, etc) you would like
+erl -pa apps/*/ebin -s geo_dns
+
+
+creating records:
+
+each dns record is a document in couchdb (on localhost by default). the document format is the following:
+
+_id : "test.com"
+iplist : [[a,b,c,d],[a,b,c,d]]
+ttl : 300
+
+* note that the iplist field is an array of arrays where ip address octets are items in the internal array.
+
+
+caveats:
+
+* this server has never been used in production and is mostly a proof of concept
+* only supports A records
+
+
+credits:
+
+bine : http://bitbucket.org/kuenishi/bine/src/
+libgeoip-erlang : http://bitbucket.org/mattsta/libgeoip-erlang/src/
+couchbeam : http://github.com/benoitc/couchbeam
