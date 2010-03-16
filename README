@@ -1,5 +1,9 @@
-
 geo_dns : a simple geoip dns server
+
+geo_dns uses the maxmind geoip db to determine which ip associated with a dns record is the closest to the requesters ip address and serves that up as the ip address for the requested domain
+
+
+author : joe williams <joe@joetify.com>
 
 
 license : apache 2
